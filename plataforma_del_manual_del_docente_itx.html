@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plataforma Unificada de Inducción - ITX Campus Xcaret</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        itx: {
+                            blue: '#0F2A4A',
+                            gold: '#D4AF37',
+                            lightbg: '#F8FAFC',
+                            accent: '#1E40AF',
+                            card: '#FFFFFF'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .unlocked-scroll { overflow: auto !important; pointer-events: auto !important; }
+        .tab-active { border-bottom: 3px solid #D4AF37; color: #0F2A4A; font-weight: 700; }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 antialiased min-h-screen flex flex-col unlocked-scroll">
+
+    <!-- BARRA DE EMERGENCIA Y DESBLOQUEO DIRECTO -->
+    <div id="emergencyBar" class="bg-amber-500 text-slate-900 text-xs font-bold px-4 py-2 flex justify-between items-center z-50 shadow-md">
+        <span><i class="fa-solid fa-triangle-exclamation mr-1"></i> Manual Digital del Docente ITX Campus Xcaret (Versión Exhaustiva Completa)</span>
+        <button onclick="forceUnlock()" class="bg-slate-900 text-amber-400 hover:bg-slate-800 px-3 py-1 rounded text-xs transition">
+            <i class="fa-solid fa-unlock mr-1"></i> Ingresar Directamente / Desbloquear Pantalla
+        </button>
+    </div>
+
+    <!-- MODAL DE BIENVENIDA Y REGISTRO -->
+    <div id="welcomeModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-40 flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full my-8 overflow-hidden border border-slate-200">
+            <div class="bg-itx-blue p-6 text-white text-center relative">
+                <div class="inline-block p-3 bg-white/10 rounded-full mb-3">
+                    <i class="fa-solid fa-graduation-cap text-3xl text-itx-gold"></i>
+                </div>
+                <h1 class="text-2xl md:text-3xl font-extrabold">Instituto Tepeyac Campus Xcaret</h1>
+                <p class="text-slate-300 text-sm mt-1">Plataforma Web Interactiva del Manual del Docente</p>
+            </div>
+            
+            <div class="p-6 md:p-8 space-y-6">
+                <div class="bg-blue-50 border-l-4 border-itx-accent p-4 rounded-r-lg">
+                    <h2 class="font-bold text-itx-blue text-base flex items-center gap-2">
+                        <i class="fa-solid fa-quote-left text-itx-gold"></i> Mensaje de la Dirección General
+                    </h2>
+                    <p class="text-xs md:text-sm text-slate-700 mt-2 italic leading-relaxed">
+                        "Educar en el Instituto Tepeyac implica inspirar, acompañar, escuchar, orientar y construir experiencias de aprendizaje significativas de la mano con las familias."
+                    </p>
+                    <p class="text-xs font-semibold text-itx-blue mt-2 text-right">— Mtro. Hugo Rojas Brito</p>
+                </div>
+
+                <form id="regForm" onsubmit="handleRegistration(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nombre Completo del Colaborador *</label>
+                        <input type="text" id="userName" required placeholder="Ej. Ana María Gómez Pérez" 
+                            class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-itx-blue outline-none text-sm">
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Correo Institucional *</label>
+                            <input type="email" id="userEmail" required placeholder="docente@tepeyac.edu.mx" 
+                                class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-itx-blue outline-none text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nivel Educativo / Área *</label>
+                            <select id="userLevel" required class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-itx-blue outline-none text-sm bg-white">
+                                <option value="">Selecciona nivel...</option>
+                                <option value="Preescolar">Preescolar</option>
+                                <option value="Primaria">Primaria</option>
+                                <option value="Secundaria">Secundaria</option>
+                                <option value="Bachillerato">Bachillerato (Preparatoria)</option>
+                                <option value="Cursos y Talleres">Cursos y Talleres</option>
+                                <option value="Coordinación / Directivo">Coordinación / Directivo</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 flex flex-col sm:flex-row gap-3">
+                        <button type="submit" class="flex-1 bg-itx-blue text-white py-3 px-6 rounded-xl font-bold hover:bg-slate-800 transition flex items-center justify-center gap-2 shadow-lg">
+                            <i class="fa-solid fa-paper-plane"></i> Iniciar Inducción
+                        </button>
+                        <button type="button" onclick="forceUnlock()" class="bg-slate-200 text-slate-700 py-3 px-4 rounded-xl font-semibold hover:bg-slate-300 transition text-sm">
+                            Explorar sin registro
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN APP CONTAINER -->
+    <div id="mainApp" class="flex-1 flex flex-col min-h-screen">
+        <!-- HEADER -->
+        <header class="bg-itx-blue text-white sticky top-0 z-30 shadow-md">
+            <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-itx-gold text-itx-blue rounded-lg flex items-center justify-center font-black text-xl shadow">
+                        ITX
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-base md:text-lg leading-tight">Manual del Docente — ITX</h1>
+                        <p class="text-xs text-slate-300" id="userInfoHeader">Instituto Tepeyac Campus Xcaret</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <button onclick="switchTab('quiz')" class="bg-itx-gold text-itx-blue px-4 py-2 rounded-lg font-bold text-xs md:text-sm hover:bg-amber-400 transition flex items-center gap-2 shadow">
+                        <i class="fa-solid fa-clipboard-question"></i>
+                        <span>Cuestionario (40 preguntas)</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- LAYOUT -->
+        <div class="max-w-7xl mx-auto w-full flex-1 flex flex-col md:flex-row gap-6 p-4 md:p-6">
+            
+            <!-- SIDEBAR NAV -->
+            <aside class="w-full md:w-80 bg-white rounded-2xl p-4 shadow-sm border border-slate-200 h-fit md:sticky md:top-20">
+                <h2 class="text-xs font-extrabold text-slate-400 uppercase tracking-wider mb-3 px-2">Estructura del Manual</h2>
+                <nav class="space-y-1 custom-scrollbar max-h-[75vh] overflow-y-auto" id="moduleNav">
+                    <!-- Dinámico por JS -->
+                </nav>
+            </aside>
+
+            <!-- CONTENIDO PRINCIPAL -->
+            <main class="flex-1 bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-slate-200 min-h-[650px]" id="contentArea">
+                <!-- Se renderiza con JS -->
+            </main>
+        </div>
+
+        <!-- FOOTER -->
+        <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500 mt-auto">
+            Instituto Tepeyac Campus Xcaret &copy; 2026. Manual del Docente — Todos los derechos reservados.
+        </footer>
+    </div>
+
+    <!-- JAVASCRIPT -->
+    <script>
+        let currentUser = { name: "Docente Registrado", level: "General", email: "docente@tepeyac.edu.mx" };
+
+        // MÓDULOS DEL MANUAL
+        const modulesData = [
+            {
+                id: 1,
+                title: "Módulo 1: Presentación e Identidad Institucional",
+                badge: "Exhaustivo",
+                summary: "Mensaje de Bienvenida, Finalidad, Alcance, Vigencia, Misión, Visión 2026-2027, Valores, Principios Pedagógicos y Proyecto Believe IT 2027.",
+                content: `
+                    <div class="space-y-6">
+                        <div class="border-b pb-4">
+                            <span class="text-xs font-bold text-itx-gold bg-amber-50 px-2.5 py-1 rounded border border-amber-200">Módulo 1 — Exhaustivo</span>
+                            <h2 class="text-2xl font-bold text-itx-blue mt-2">Presentación e Identidad Institucional</h2>
+                        </div>
+
+                        <!-- 1.1 Mensaje del Director -->
+                        <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 space-y-3">
+                            <h3 class="font-bold text-itx-blue text-base flex items-center gap-2">
+                                <i class="fa-solid fa-envelope-open-text text-itx-gold"></i> 1.1 Mensaje de Bienvenida Íntegro — Mtro. Hugo Rojas Brito
+                            </h3>
+                            <div class="text-xs md:text-sm text-slate-700 space-y-3 leading-relaxed italic border-l-4 border-itx-gold pl-4 bg-white p-4 rounded-r-lg shadow-sm">
+                                <p>"Estimados docentes, académicos, instructores, talleristas y facilitadores del Instituto Tepeyac Xcaret:"</p>
+                                <p>"Les damos la más cordial bienvenida a nuestra comunidad educativa. Al incorporarse a nuestro equipo, ustedes asumen un compromiso fundamental con la formación integral de niñas, niños y jóvenes. En el Instituto Tepeyac entendemos la educación como un acto de trascendencia humana, donde cada aula es un espacio para detonar el talento, promover el pensamiento crítico y sembrar valores perdurables."</p>
+                                <p>"Educar no es solo transmitir conocimientos; educar implica inspirar, acompañar, escuchar, orientar y construir, junto con nuestros estudiantes y sus familias, experiencias de aprendizaje significativas. Los invitamos a desempeñar su labor con pasión, rigor ético, apertura al cambio y una búsqueda constante de la excelencia."</p>
+                                <p class="not-italic font-bold text-itx-blue text-right">— Mtro. Hugo Rojas Brito, Director General ITX</p>
+                            </div>
+                        </div>
+
+                        <!-- 1.2 Finalidad y 1.3 Alcance -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                            <div class="p-4 bg-blue-50/50 rounded-xl border border-blue-100">
+                                <h4 class="font-bold text-itx-blue text-sm mb-2"><i class="fa-solid fa-bullseye text-itx-gold mr-1"></i> 1.2 Finalidad del Manual</h4>
+                                <p class="text-slate-600 leading-relaxed">Brindar orientación y acompañamiento institucional sobre lineamientos, procedimientos, responsabilidades y criterios pedagógicos, normativos y administrativos para garantizar el cumplimiento de la Misión y Visión Institucional.</p>
+                            </div>
+                            <div class="p-4 bg-blue-50/50 rounded-xl border border-blue-100">
+                                <h4 class="font-bold text-itx-blue text-sm mb-2"><i class="fa-solid fa-users text-itx-gold mr-1"></i> 1.3 Alcance y Obligatoriedad</h4>
+                                <p class="text-slate-600 leading-relaxed">De cumplimiento estricto y obligatorio para docentes titulares, auxiliares, coordinadores, talleristas, instructores, facilitadores y entrenadores deportivos de todas las secciones académicas.</p>
+                            </div>
+                        </div>
+
+                        <!-- 1.4 Vigencia y Factores Detonantes 1-12 -->
+                        <div class="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-3 text-xs">
+                            <h3 class="font-bold text-itx-blue text-sm"><i class="fa-solid fa-clock-rotate-left text-itx-gold mr-1"></i> 1.4 Vigencia y Proceso de Actualización (12 Factores Detonantes)</h3>
+                            <p class="text-slate-600">Documento de vigencia permanente, revisado al inicio de cada ciclo escolar ante los siguientes factores:</p>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 pt-2">
+                                <div class="bg-white p-2 rounded border">1. Reformas educativas SEP / SEQ</div>
+                                <div class="bg-white p-2 rounded border">2. Cambios en leyes laborales</div>
+                                <div class="bg-white p-2 rounded border">3. Actualizaciones del Modelo ITX</div>
+                                <div class="bg-white p-2 rounded border">4. Innovaciones tecnológicas / LMS</div>
+                                <div class="bg-white p-2 rounded border">5. Evaluaciones del desempeño</div>
+                                <div class="bg-white p-2 rounded border">6. Resultados de CTE y Academias</div>
+                                <div class="bg-white p-2 rounded border">7. Auditorías de calidad RVOE</div>
+                                <div class="bg-white p-2 rounded border">8. Encuestas de clima escolar</div>
+                                <div class="bg-white p-2 rounded border">9. Recomendaciones de Psicopedagogía</div>
+                                <div class="bg-white p-2 rounded border">10. Emergencias o protocolos de salud</div>
+                                <div class="bg-white p-2 rounded border">11. Reestructuración organizativa</div>
+                                <div class="bg-white p-2 rounded border">12. Acuerdos del Consejo Directivo</div>
+                            </div>
+                        </div>
+
+                        <!-- 1.5 Misión, Visión y Pilares -->
+                        <div class="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-4 text-xs">
+                            <h3 class="font-bold text-itx-blue text-base">1.5 Misión, Visión 2026-2027 y Pilares Estratégicos</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="bg-white p-4 rounded-xl border border-slate-200">
+                                    <h4 class="font-bold text-itx-blue text-sm mb-1">Misión Institucional</h4>
+                                    <p class="text-slate-600 leading-relaxed">Formar personas responsables, reflexivas y críticas que sepan tomar decisiones encaminadas a transformar su entorno de manera favorable, sustentable y positiva, con sólida preparación académica y humana.</p>
+                                </div>
+                                <div class="bg-white p-4 rounded-xl border border-slate-200">
+                                    <h4 class="font-bold text-itx-blue text-sm mb-1">Visión 2026-2027</h4>
+                                    <p class="text-slate-600 leading-relaxed">Consolidarnos como uno de los grupos educativos particulares más importantes de México con presencia nacional e internacional, reconocidos por la excelencia integral, liderazgo en innovación y sólidos valores.</p>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-800 mb-2">Los 4 Pilares Estratégicos:</h4>
+                                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
+                                    <div class="p-2 bg-blue-100/50 rounded font-semibold text-itx-blue">1. Excelencia Académica</div>
+                                    <div class="p-2 bg-amber-100/50 rounded font-semibold text-amber-900">2. Formación Humanista</div>
+                                    <div class="p-2 bg-blue-100/50 rounded font-semibold text-itx-blue">3. Innovación Digital</div>
+                                    <div class="p-2 bg-amber-100/50 rounded font-semibold text-amber-900">4. Liderazgo Sostenible</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 1.6 Red Tridimensional de Valores -->
+                        <div class="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-3 text-xs">
+                            <h3 class="font-bold text-itx-blue text-base">1.6 Red Tridimensional de Valores</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                <div class="bg-white p-4 rounded-xl border border-slate-200">
+                                    <h4 class="font-bold text-itx-blue mb-2"><i class="fa-solid fa-shield-heart text-amber-500 mr-1"></i> RESPETO (Valores Morales)</h4>
+                                    <p class="text-slate-600">Responsabilidad, laboriosidad, perseverancia, honradez y puntualidad en el cumplimiento cotidiano.</p>
+                                </div>
+                                <div class="bg-white p-4 rounded-xl border border-slate-200">
+                                    <h4 class="font-bold text-itx-blue mb-2"><i class="fa-solid fa-heart text-rose-500 mr-1"></i> AMOR (Valores Éticos)</h4>
+                                    <p class="text-slate-600">Humildad, bondad, tolerancia, empatía y solidaridad activa con la comunidad y el entorno.</p>
+                                </div>
+                                <div class="bg-white p-4 rounded-xl border border-slate-200">
+                                    <h4 class="font-bold text-itx-blue mb-2"><i class="fa-solid fa-scale-balanced text-blue-500 mr-1"></i> JUSTICIA (Valores Cívicos)</h4>
+                                    <p class="text-slate-600">Igualdad de oportunidades, diálogo respetuoso, vivencia democrática y apego estricto a la legalidad.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 1.7 Principios Pedagógicos Completo (1-14) -->
+                        <div class="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-3 text-xs">
+                            <h3 class="font-bold text-itx-blue text-base">1.7 Principios Pedagógicos Institucionales (1 al 14)</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                <div class="p-2 bg-white rounded border">1. La educación como proceso de humanización trascendente.</div>
+                                <div class="p-2 bg-white rounded border">2. Centralidad del estudiante en su proceso formativo.</div>
+                                <div class="p-2 bg-white rounded border">3. Aprendizaje significativo basado en la indagación activa.</div>
+                                <div class="p-2 bg-white rounded border">4. Desarrollo de inteligencias múltiples y talentos diversos.</div>
+                                <div class="p-2 bg-white rounded border">5. Cultura del esfuerzo, disciplina y superación constante.</div>
+                                <div class="p-2 bg-white rounded border">6. Evaluación formativa, cualitativa y continua.</div>
+                                <div class="p-2 bg-white rounded border">7. Ambientes seguros, inclusivos y emocionalmente sanos.</div>
+                                <div class="p-2 bg-white rounded border">8. Interdisciplinariedad y transversalidad curricular.</div>
+                                <div class="p-2 bg-white rounded border">9. Uso ético y pedagógico de tecnologías de vanguardia.</div>
+                                <div class="p-2 bg-white rounded border">10. Fomento de la lectura crítica y la expresión oral y escrita.</div>
+                                <div class="p-2 bg-white rounded border">11. Conciencia ecológica, desarrollo sustentable y cuidado del entorno.</div>
+                                <div class="p-2 bg-white rounded border">12. Vinculación estrecha y corresponsable con las familias.</div>
+                                <div class="p-2 bg-white rounded border">13. Pensamiento lógico-matemático aplicado a la vida real.</div>
+                                <div class="p-2 bg-white rounded border">14. Interculturalidad, civismo e identidad nacional y global.</div>
+                            </div>
+                        </div>
+
+                        <!-- 1.8 Proyecto Believe IT 2027 -->
+                        <div class="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-3 text-xs">
+                            <h3 class="font-bold text-itx-blue text-base">1.8 Marco Estratégico: Proyecto Believe IT 2027</h3>
+                            <p class="text-slate-600">Plan estratégico quinquenal que impulsa la transformación institucional a través de 6 Dimensiones Estructurantes:</p>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2">
+                                <div class="p-3 bg-white rounded-lg border text-center font-bold text-itx-blue">1. Dimension Contextual</div>
+                                <div class="p-3 bg-white rounded-lg border text-center font-bold text-itx-blue">2. Dimension Pedagógica</div>
+                                <div class="p-3 bg-white rounded-lg border text-center font-bold text-itx-blue">3. Dimension Administrativa</div>
+                                <div class="p-3 bg-white rounded-lg border text-center font-bold text-itx-blue">4. Dimension Organizativa</div>
+                                <div class="p-3 bg-white rounded-lg border text-center font-bold text-itx-blue">5. Dimension Comunitaria</div>
+                                <div class="p-3 bg-white rounded-lg border text-center font-bold text-itx-blue">6. Dimension Vinculante</div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                id: 2,
+                title: "Módulo 2: Perfil y Competencias del Docente",
+                badge: "Exhaustivo",
+                summary: "Desglose exhaustivo de las 6 Competencias Fundamentales del Docente ITX en paneles interactivos.",
+                content: `
+                    <div class="space-y-6">
+                        <div class="border-b pb-4">
+                            <span class="text-xs font-bold text-itx-gold bg-amber-50 px-2.5 py-1 rounded border border-amber-200">Módulo 2 — Competencias Docentes</span>
+                            <h2 class="text-2xl font-bold text-itx-blue mt-2">Perfil y Competencias Fundamentales del Docente ITX</h2>
+                        </div>
+
+                        <p class="text-xs text-slate-600">El docente del ITX se distingue por un perfil profesional de excelencia, guiado por 6 competencias estructurantes:</p>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                            <!-- Competencia 1 -->
+                            <div class="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-2 hover:shadow-md transition">
+                                <div class="flex items-center gap-2 text-itx-blue font-bold text-sm">
+                                    <span class="w-7 h-7 rounded-full bg-itx-blue text-white flex items-center justify-center font-bold text-xs">1</span>
+                                    <span>Comunicación Asertiva y Efectiva</span>
+                                </div>
+                                <p class="text-slate-600 leading-relaxed">Expresa ideas con claridad, fluidez, corrección gramática y precisión ortográfica en medios verbales y escritos. Mantiene un tono respetuoso, empático y constructivo con alumnos, padres y colegas.</p>
+                            </div>
+
+                            <!-- Competencia 2 -->
+                            <div class="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-2 hover:shadow-md transition">
+                                <div class="flex items-center gap-2 text-itx-blue font-bold text-sm">
+                                    <span class="w-7 h-7 rounded-full bg-itx-blue text-white flex items-center justify-center font-bold text-xs">2</span>
+                                    <span>Razonamiento y Juicio Ético</span>
+                                </div>
+                                <p class="text-slate-600 leading-relaxed">Analiza situaciones objetivamente con base en datos e información verificable. Toma decisiones ponderadas y transparentes alineadas a los valores institucionales y la equidad.</p>
+                            </div>
+
+                            <!-- Competencia 3 -->
+                            <div class="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-2 hover:shadow-md transition">
+                                <div class="flex items-center gap-2 text-itx-blue font-bold text-sm">
+                                    <span class="w-7 h-7 rounded-full bg-itx-blue text-white flex items-center justify-center font-bold text-xs">3</span>
+                                    <span>Autocontrol e Inteligencia Emocional</span>
+                                </div>
+                                <p class="text-slate-600 leading-relaxed">Regula de manera consciente sus emociones ante situaciones de estrés o imprevistos. Mantiene la serenidad, la tolerancia y el liderazgo positivo en la gestión del aula.</p>
+                            </div>
+
+                            <!-- Competencia 4 -->
+                            <div class="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-2 hover:shadow-md transition">
+                                <div class="flex items-center gap-2 text-itx-blue font-bold text-sm">
+                                    <span class="w-7 h-7 rounded-full bg-itx-blue text-white flex items-center justify-center font-bold text-xs">4</span>
+                                    <span>Relacionalidad Educadora</span>
+                                </div>
+                                <p class="text-slate-600 leading-relaxed">Demuestra alta vocación de servicio, construyendo vínculos pedagógicos sólidos basados en la confianza, el respeto mutuo, la mentoría y la empatía con la comunidad escolar.</p>
+                            </div>
+
+                            <!-- Competencia 5 -->
+                            <div class="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-2 hover:shadow-md transition">
+                                <div class="flex items-center gap-2 text-itx-blue font-bold text-sm">
+                                    <span class="w-7 h-7 rounded-full bg-itx-blue text-white flex items-center justify-center font-bold text-xs">5</span>
+                                    <span>Dominio y Estructura de Saberes</span>
+                                </div>
+                                <p class="text-slate-600 leading-relaxed">Maneja con solvencia y actualización pedagógica los contenidos de los planes SEP y el Modelo ITX, estructurando proyectos didácticos rigurosos, articulados e innovadores.</p>
+                            </div>
+
+                            <!-- Competencia 6 -->
+                            <div class="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-2 hover:shadow-md transition">
+                                <div class="flex items-center gap-2 text-itx-blue font-bold text-sm">
+                                    <span class="w-7 h-7 rounded-full bg-itx-blue text-white flex items-center justify-center font-bold text-xs">6</span>
+                                    <span>Técnicas de Indagación y Pensamiento Crítico</span>
+                                </div>
+                                <p class="text-slate-600 leading-relaxed">Promueve en los estudiantes la capacidad de formular preguntas potentes, investigar críticamente, resolver problemas complejos y construir su propio aprendizaje.</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                id: 3,
+                title: "Módulo 3: Marco Normativo y Legal",
+                badge: "Exhaustivo",
+                summary: "Fundamentación Art. 3°, Ley General de Educación, Lineamientos SEP / SEQ Quintana Roo, RVOE, PROFECO y Protocolos de Convivencia Escolar.",
+                content: `
+                    <div class="space-y-6">
+                        <div class="border-b pb-4">
+                            <span class="text-xs font-bold text-itx-gold bg-amber-50 px-2.5 py-1 rounded border border-amber-200">Módulo 3 — Normativa Legal</span>
+                            <h2 class="text-2xl font-bold text-itx-blue mt-2">Marco Normativo y Legal en la Educación</h2>
+                        </div>
+
+                        <!-- 3.1 Ley General de Educación -->
+                        <div class="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-3 text-xs">
+                            <h3 class="font-bold text-itx-blue text-sm"><i class="fa-solid fa-gavel text-itx-gold mr-1"></i> 3.1 Ley General de Educación (Art. 3° Constitucional)</h3>
+                            <div class="space-y-2">
+                                <div class="p-3 bg-white rounded border"><strong>Derecho Universal:</strong> Garantiza la educación pública, laica, gratuita, inclusiva y de excelencia desde nivel inicial hasta medio superior.</div>
+                                <div class="p-3 bg-white rounded border"><strong>Nueva Escuela Mexicana (NEM):</strong> Enfoque humanista, formación ciudadana, sentido de pertenencia comunitaria y cultura de paz.</div>
+                                <div class="p-3 bg-white rounded border"><strong>Revalorización Docente:</strong> Reconocimiento del maestro como agente fundamental de la transformación social y del proceso educativo.</div>
+                            </div>
+                        </div>
+
+                        <!-- 3.2 Lineamientos SEP / SEQ -->
+                        <div class="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-3 text-xs">
+                            <h3 class="font-bold text-itx-blue text-sm"><i class="fa-solid fa-landmark text-itx-gold mr-1"></i> 3.2 Lineamientos de la SEP y SEQ (Quintana Roo)</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <div class="p-3 bg-white rounded border"><strong>Calendario Escolar:</strong> Cumplimiento estricto de 185 a 190 días lectivos y sesiones mensuales de CTE.</div>
+                                <div class="p-3 bg-white rounded border"><strong>RVOE:</strong> Registro de Validez Oficial de Estudios vigente para cada nivel impartido.</div>
+                                <div class="p-3 bg-white rounded border"><strong>Transparencia PROFECO:</strong> Información clara y oportuna sobre costos, reglamentos y servicios educativos.</div>
+                                <div class="p-3 bg-white rounded border"><strong>Programa de Becas (5%):</strong> Asignación del 5% de la matrícula total conforme a normativa de SEQ.</div>
+                            </div>
+                        </div>
+
+                        <!-- 3.3 Convivencia Escolar en Q. Roo -->
+                        <div class="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-3 text-xs">
+                            <h3 class="font-bold text-itx-blue text-sm"><i class="fa-solid fa-handshake text-itx-gold mr-1"></i> 3.3 Marco para la Convivencia Escolar de Quintana Roo</h3>
+                            <p class="text-slate-600">Establece derechos, deberes y protocolos de prevención ante conductas disruptivas:</p>
+                            <div class="space-y-2 pt-1">
+                                <div class="p-3 bg-white rounded border"><strong>Derechos y Deberes:</strong> Respeto a la integridad física, psicológica y moral de alumnos y personal docente.</div>
+                                <div class="p-3 bg-white rounded border"><strong>Normatividad por Espacios:</strong> Reglas claras para aulas, laboratorios, patios, canchas deportivas y áreas comunes.</div>
+                                <div class="p-3 bg-white rounded border"><strong>Procedimientos Disciplinarios:</strong> Enfoque formativo, mediación escolar, acuerdos compromisos con tutores y reparación del daño.</div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                id: 4,
+                title: "Módulo 4: Organización Académica y Funciones",
+                badge: "Exhaustivo",
+                summary: "Estructura por Secciones, Organigrama, Tabla Completa de Criterios y Evidencias de Desempeño (13), Horarios (40h), Secuencia Didáctica y AulaNet.",
+                content: `
+                    <div class="space-y-6">
+                        <div class="border-b pb-4">
+                            <span class="text-xs font-bold text-itx-gold bg-amber-50 px-2.5 py-1 rounded border border-amber-200">Módulo 4 — Organización Académica</span>
+                            <h2 class="text-2xl font-bold text-itx-blue mt-2">Organización Académica, Funciones y Procesos</h2>
+                        </div>
+
+                        <!-- 4.1 Estructura y 5 Ejes -->
+                        <div class="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-3 text-xs">
+                            <h3 class="font-bold text-itx-blue text-sm">4.1 Estructura Académica (4 Secciones y los 5 Ejes)</h3>
+                            <p class="text-slate-600">Estructurado en Preescolar, Primaria, Secundaria y Bachillerato bajo el Modelo Constructivista Social en 5 Ejes Formativos:</p>
+                            <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 text-center pt-2 font-bold text-itx-blue">
+                                <div class="p-2 bg-white rounded border">1. SER</div>
+                                <div class="p-2 bg-white rounded border">2. APRENDER</div>
+                                <div class="p-2 bg-white rounded border">3. HACER</div>
+                                <div class="p-2 bg-white rounded border">4. CONVIVIR</div>
+                                <div class="p-2 bg-white rounded border">5. TRANSFORMAR</div>
+                            </div>
+                        </div>
+
+                        <!-- 4.2 Organigrama Institucional Diagrama Visual -->
+                        <div class="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-3 text-xs">
+                            <h3 class="font-bold text-itx-blue text-sm"><i class="fa-solid fa-sitemap text-itx-gold mr-1"></i> 4.2 Organigrama Institucional ITX</h3>
+                            <div class="p-4 bg-white rounded-xl border text-center space-y-3">
+                                <div class="inline-block px-4 py-2 bg-itx-blue text-white rounded-lg font-bold">Dirección General (Mtro. Hugo Rojas Brito)</div>
+                                <div class="text-slate-400"><i class="fa-solid fa-arrow-down"></i></div>
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                                    <div class="p-2 bg-blue-50 border rounded font-semibold text-itx-blue">Coordinaciones Académicas (Preescolar, Primaria, Sec, Bach)</div>
+                                    <div class="p-2 bg-amber-50 border rounded font-semibold text-amber-900">Coordinación Psicopedagógica y Formativa</div>
+                                    <div class="p-2 bg-blue-50 border rounded font-semibold text-itx-blue">Dirección Administrativa y Operativa</div>
+                                </div>
+                                <div class="text-slate-400"><i class="fa-solid fa-arrow-down"></i></div>
+                                <div class="p-2 bg-slate-100 rounded font-bold text-slate-700">Cuerpo Docente / Instructores / Talleristas / Previsores</div>
+                            </div>
+                        </div>
+
+                        <!-- 4.4 Tabla Completa de Criterios y Evidencias (13 Criterios) -->
+                        <div class="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-3 text-xs overflow-x-auto">
+                            <h3 class="font-bold text-itx-blue text-sm">4.4 Tabla de Criterios y Evidencias de Desempeño Docente (13 Criterios)</h3>
+                            <table class="w-full text-left border-collapse bg-white rounded-lg overflow-hidden border border-slate-200">
+                                <thead>
+                                    <tr class="bg-itx-blue text-white text-[11px]">
+                                        <th class="p-2.5 border">#</th>
+                                        <th class="p-2.5 border">Criterio Institucional</th>
+                                        <th class="p-2.5 border">Descripción Genérica</th>
+                                        <th class="p-2.5 border">Evidencia Verificable</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y text-[11px] text-slate-700">
+                                    <tr><td class="p-2 font-bold border">1</td><td class="p-2 border">Planificación Didáctica</td><td class="p-2 border">Entrega en tiempo de dosificaciones y mapas de ruta.</td><td class="p-2 border">Planeación validada en AulaNet.</td></tr>
+                                    <tr><td class="p-2 font-bold border">2</td><td class="p-2 border">Puntualidad y Asistencia</td><td class="p-2 border">Cumplimiento estricto del horario de 40h.</td><td class="p-2 border">Registro biométrico diario.</td></tr>
+                                    <tr><td class="p-2 font-bold border">3</td><td class="p-2 border">Pase de Lista en AulaNet</td><td class="p-2 border">Captura de asistencia en primeros 10 min.</td><td class="p-2 border">Reporte digital del sistema.</td></tr>
+                                    <tr><td class="p-2 font-bold border">4</td><td class="p-2 border">Evaluación Formativa</td><td class="p-2 border">Registro oportuno de calificaciones y rúbricas.</td><td class="p-2 border">Libreta de tareas y calificaciones en LMS.</td></tr>
+                                    <tr><td class="p-2 font-bold border">5</td><td class="p-2 border">Gestión y Clima de Aula</td><td class="p-2 border">Ambiente de respeto, orden y disciplina activa.</td><td class="p-2 border">Observaciones de clase por Coordinación.</td></tr>
+                                    <tr><td class="p-2 font-bold border">6</td><td class="p-2 border">Guardias de Vigilancia</td><td class="p-2 border">Supervisión preventiva en recesos y entradas.</td><td class="p-2 border">Bitácora de guardias.</td></tr>
+                                    <tr><td class="p-2 font-bold border">7</td><td class="p-2 border">Atención a Padres</td><td class="p-2 border">Entrevistas formales y minutas de seguimiento.</td><td class="p-2 border">Minutas firmadas en expediente.</td></tr>
+                                    <tr><td class="p-2 font-bold border">8</td><td class="p-2 border">Atención a la Diversidad</td><td class="p-2 border">Adecuaciones curriculares con Psicopedagogía.</td><td class="p-2 border">Planes de apoyo individualizados.</td></tr>
+                                    <tr><td class="p-2 font-bold border">9</td><td class="p-2 border">Participación en CTE</td><td class="p-2 border">Asistencia activa y aportaciones al colectivo.</td><td class="p-2 border">Actas y productos de CTE.</td></tr>
+                                    <tr><td class="p-2 font-bold border">10</td><td class="p-2 border">Uso de Tecnología</td><td class="p-2 border">Integración de herramientas digitales en clase.</td><td class="p-2 border">Recursos interactivos en planeación.</td></tr>
+                                    <tr><td class="p-2 font-bold border">11</td><td class="p-2 border">Desarrollo Profesional</td><td class="p-2 border">Acreditación de cursos de capacitación ITX.</td><td class="p-2 border">Constancias de formación.</td></tr>
+                                    <tr><td class="p-2 font-bold border">12</td><td class="p-2 border">Imagen Institucional</td><td class="p-2 border">Portar el uniforme y credencial oficial.</td><td class="p-2 border">Verificación cotidiana.</td></tr>
+                                    <tr><td class="p-2 font-bold border">13</td><td class="p-2 border">Cuidado del Campus</td><td class="p-2 border">Promoción de la sustentabilidad y orden.</td><td class="p-2 border">Estado del aula e instalaciones.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- 4.5 Horarios, Cargas y Secuencia Didáctica -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                            <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+                                <h4 class="font-bold text-itx-blue text-sm">4.5 Horarios y Jornada Laboral</h4>
+                                <p class="text-slate-600">Jornada de 40 horas semanales para docentes de tiempo completo, distribuidas en docencia frente a grupo, planeación, guardia, atención a padres y trabajo colegiado.</p>
+                            </div>
+                            <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+                                <h4 class="font-bold text-itx-blue text-sm">Secuencia Didáctica (4 Fases)</h4>
+                                <p class="text-slate-600">1. <strong>Focalización:</strong> Pregunta detonadora.<br>2. <strong>Exploración:</strong> Indagación guiada.<br>3. <strong>Reflexión:</strong> Análisis crítico.<br>4. <strong>Aplicación/Evaluación:</strong> Producto formativo.</p>
+                            </div>
+                        </div>
+
+                        <!-- 4.8 Manejo Obligatorio de AulaNet -->
+                        <div class="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-2 text-xs">
+                            <h3 class="font-bold text-itx-blue text-sm"><i class="fa-solid fa-laptop-code text-itx-gold mr-1"></i> 4.8 Manejo Obligatorio de AulaNet (4 Procesos Diarios)</h3>
+                            <div class="grid grid-cols-1 sm:grid-cols-4 gap-2 pt-1 font-semibold text-slate-700">
+                                <div class="p-3 bg-white rounded border text-center">1. Pase de Lista (primeros 10 min)</div>
+                                <div class="p-3 bg-white rounded border text-center">2. Carga de Calificaciones y Tareas</div>
+                                <div class="p-3 bg-white rounded border text-center">3. Registro de Incidencias Conductuales</div>
+                                <div class="p-3 bg-white rounded border text-center">4. Mensajería Oficial con Familias</div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            }
+        ];
+
+        // Módulos 5 al 14 (Síntesis Informativa)
+        const extraModules = [
+            { id: 5, title: "Módulo 5: Gestión de Aula y Clima Escolar", topic: "Estrategias de control positivo, establecimiento de acuerdos de convivencia y ambiente inclusivo." },
+            { id: 6, title: "Módulo 6: Evaluación y Seguimiento Académico", topic: "Criterios de evaluación formativa, sumativa, ponderaciones y registro oportuno en plataformas." },
+            { id: 7, title: "Módulo 7: Uso de Plataformas Digitales y AulaNet", topic: "Gestión avanzada de LMS, pase de lista biométrico/digital, reportes académicos y bitácoras." },
+            { id: 8, title: "Módulo 8: Atención a Padres de Familia", topic: "Protocolos para entrevistas individuales, minutas de acuerdos y juntas informativas trimestrales." },
+            { id: 9, title: "Módulo 9: Inclusión y Necesidades Educativas", topic: "Adecuaciones curriculares en coordinación estrecha con el Departamento de Psicopedagogía." },
+            { id: 10, title: "Módulo 10: Eventos, Proyectos y Salidas Didácticas", topic: "Planificación de excursiones pedagógicas, logística, autorizaciones y festivales cívico-culturales." },
+            { id: 11, title: "Módulo 11: Desarrollo Profesional Docente", topic: "Capacitaciones continuas, talleres de actualización, academias y trabajo colegiado." },
+            { id: 12, title: "Módulo 12: Responsabilidad Ambiental en Campus", topic: "Cuidado de áreas naturales, sustentabilidad y políticas ecofriendly del Campus Xcaret." },
+            { id: 13, title: "Módulo 13: Procedimientos Administrativos", topic: "Solicitud de materiales, gestión de permisos, justificantes de incapacidad y reportes de incidencias." },
+            { id: 14, title: "Módulo 14: Plan de Vida y Carrera en ITX", topic: "Crecimiento personal, evaluaciones de desempeño, reconocimientos al mérito docente y clima laboral." }
+        ];
+
+        extraModules.forEach(mod => {
+            modulesData.push({
+                id: mod.id,
+                title: mod.title,
+                badge: "Síntesis",
+                summary: mod.topic,
+                content: `
+                    <div class="space-y-6">
+                        <div class="border-b pb-4">
+                            <span class="text-xs font-bold text-slate-500 bg-slate-100 px-2.5 py-1 rounded">Síntesis Informativa</span>
+                            <h2 class="text-2xl font-bold text-itx-blue mt-2">${mod.title}</h2>
+                        </div>
+                        <div class="p-6 bg-slate-50 rounded-2xl border border-slate-200">
+                            <h3 class="font-bold text-itx-blue text-lg mb-2">Eje Central del Módulo</h3>
+                            <p class="text-sm text-slate-700 leading-relaxed">${mod.topic}</p>
+                            <p class="text-xs text-slate-500 mt-4">Nota: Para consultar las guías detalladas y anexos técnicos de este módulo, solicítelos en su Coordinación Académica del Campus Xcaret.</p>
+                        </div>
+                    </div>
+                `
+            });
+        });
+
+        // Banco Ampliado de 40 Preguntas basada rigurosamente en el Manual
+        const quizQuestions = [
+            { q: "1. ¿Quién emite el mensaje oficial de bienvenida al Manual del Docente ITX?", options: ["Dirección Académica", "Mtro. Hugo Rojas Brito (Dirección General)", "Coordinación de Deportes"], correct: 1 },
+            { q: "2. ¿A qué niveles educativos orienta el proyecto educativo del Instituto Tepeyac Xcaret?", options: ["Solo Universidad", "Desde preescolar hasta bachillerato, cursos, talleres y diplomados", "Únicamente Primaria y Secundaria"], correct: 1 },
+            { q: "3. ¿Cuál es el horizonte de la Visión institucional del ITX?", options: ["Ciclo escolar 2026-2027", "Ciclo escolar 2030-2031", "Año 2050"], correct: 0 },
+            { q: "4. ¿Cómo se organiza la Red Tridimensional de Valores del ITX?", options: ["Respeto (Morales), Amor (Éticos), Justicia (Cívicos)", "Lealtad, Disciplina, Esfuerzo", "Honestidad, Puntualidad, Orden"], correct: 0 },
+            { q: "5. ¿Cuáles son las 6 Dimensiones Estructurantes del proyecto Believe IT 2027?", options: ["Contextual, Pedagógica, Administrativa, Organizativa, Comunitaria, Vinculante", "Financiera, Legal, Operativa, Social, Cultural, Deportiva", "Académica, Tecnológica, Directiva, Estudiantil, Padres, Entorno"], correct: 0 },
+            { q: "6. ¿Cuáles son las 6 Competencias Fundamentales del Docente ITX?", options: ["Comunicación, Razonamiento Ético, Autocontrol, Relacionalidad Educadora, Dominio de Saberes, Técnicas de Indagación", "Puntualidad, Asistencia, Uniforme, Tareas, Evaluaciones, Disciplina", "Liderazgo, Oratoria, Inglés, TIC, Matemáticas, Empatía"], correct: 0 },
+            { q: "7. ¿Qué fundamenta el Artículo 3° Constitucional y la Ley General de Educación?", options: ["Derecho a la educación universal, inclusiva, pública, laica y de excelencia", "Educación exclusiva privada y selectiva", "Libre asistencia sin normatividad"], correct: 0 },
+            { q: "8. ¿Bajo qué lineamientos opera el ITX en Quintana Roo en cuanto a calendario?", options: ["Calendario oficial de 185 a 190 días efectivos y CTE", "Calendario internacional de verano", "Calendario libre institucional"], correct: 0 },
+            { q: "9. ¿Cuál es la obligación legal en cuanto a becas para escuelas particulares en el estado?", options: ["Otorgar mínimo el 5% de la matrícula total inscrita", "15% obligatorio", "No aplica porcentaje"], correct: 0 },
+            { q: "10. ¿Cómo se prioriza la atención frente a conductas disruptivas en el protocolo de convivencia?", options: ["Mediación, orientación psicológica y compromisos restaurativos", "Expulsión directa sin revisión", "Amonestación pública"], correct: 0 },
+            { q: "11. ¿Cuántas secciones académicas componen la estructura del Campus Xcaret?", options: ["Cuatro (Preescolar, Primaria, Secundaria, Bachillerato)", "Dos (Primaria y Secundaria)", "Tres (Kínder, Primaria, Preparatoria)"], correct: 0 },
+            { q: "12. ¿En qué se fundamenta el Modelo Educativo del ITX?", options: ["Constructivismo Social basado en la Indagación (5 ejes: Ser, Aprender, Hacer, Convivir, Transformar)", "Conductismo tradicional", "Memorización intensiva"], correct: 0 },
+            { q: "13. ¿Cuál es la jornada laboral semanal para el personal docente de tiempo completo?", options: ["40 horas semanales de lunes a viernes", "20 horas semanales", "48 horas"], correct: 0 },
+            { q: "14. ¿Cuáles son las 4 fases de la estructura de la secuencia didáctica en el ITX?", options: ["Focalización, Exploración, Reflexión, Aplicación/Evaluación", "Introducción, Desarrollo, Cierre, Tarea", "Examen, Calificación, Retroalimentación, Registro"], correct: 0 },
+            { q: "15. ¿Cuáles son espacios obligatorios de trabajo colegiado y análisis profesional?", options: ["Reuniones de academia, CTE mensuales, juntas de sección y mesas interdisciplinarias", "Solo reuniones anuales", "Juntas opcionales de pasillo"], correct: 0 },
+            { q: "16. ¿Cuál es el canal oficial exclusivo para comunicación escrita con padres de familia?", options: ["Correo institucional @tepeyac.edu.mx y plataforma AulaNet", "Redes sociales personales del docente", "Grupos informales de mensajería externa"], correct: 0 },
+            { q: "17. ¿Qué función de AulaNet es de uso obligatorio y diario en los primeros 10 minutos de clase?", options: ["Captura de asistencia (asistencias, retardos y faltas)", "Publicación de fotos personales", "Modificación del calendario escolar"], correct: 0 },
+            { q: "18. ¿Qué documento institucional elabora el docente para planificar contenidos conforme al calendario oficial?", options: ["Dosificación anual y Mapa de Ruta / Planeación por Bloque", "Diario personal", "Informe financiero"], correct: 0 },
+            { q: "19. ¿Cuál es la postura institucional ante el acoso escolar?", options: ["Cero tolerancia con protocolos preventivos, detección y atención integral", "Permitir que los alumnos lo resuelvan solos", "Sanción económica a tutores"], correct: 0 },
+            { q: "20. El cumplimiento del Manual para el Docente del ITX es:", options: ["OBLIGATORIO para todo el personal académico y formativo", "Opcional según el criterio del profesor", "Sugerido solo para nuevos ingresos"], correct: 0 },
+            { q: "21. ¿Qué organismo regula los Reconocimientos de Validez Oficial de Estudios (RVOE) en el estado?", options: ["SEQ (Secretaría de Educación de Quintana Roo)", "PROFECO", "Secretaría de Economía"], correct: 0 },
+            { q: "22. ¿Qué aspecto cuidan las disposiciones financieras y la norma oficial en colegios particulares?", options: ["Transparencia en cobros e información clara a tutores (PROFECO)", "Venta de uniformes exclusiva", "Inversión bursátil"], correct: 0 },
+            { q: "23. Las salidas didácticas fuera del campus requieren:", options: ["Gestión de logística, permisos pedagógicos externos y expediente de autorización", "Aviso verbal al salir por la puerta", "Ningún requisito"], correct: 0 },
+            { q: "24. El rol del docente en el enfoque humanista de la Nueva Escuela Mexicana es ser:", options: ["Formador integral y agente fundamental de transformación social", "Un mero instructor técnico", "Espectador de clases"], correct: 0 },
+            { q: "25. ¿Qué comprende la presencia educadora y preventiva del docente fuera de clase?", options: ["Supervisión activa en pasillos, recesos y guardias", "Permanecer en sala de maestros", "Descansar en la dirección"], correct: 0 },
+            { q: "26. Las juntas de coordinación académica y CTE implican asistencia:", options: ["Requerida e institucionalmente obligatoria", "Voluntaria según el ánimo del docente", "Sustituible por tareas en casa"], correct: 0 },
+            { q: "27. ¿Cómo se fomenta la competencia de Autocontrol emocional en el docente?", options: ["Reconociendo y regulando consciente sus emociones y canalizando constructivamente el estrés", "Reprimiendo cualquier expresión", "Evitando hablar con los alumnos"], correct: 0 },
+            { q: "28. ¿Qué promueve la Relacionalidad Educadora?", options: ["Vínculos auténticos y compromiso profundo con el desarrollo de niños y jóvenes", "Distanciamiento profesional frío", "Relaciones comerciales"], correct: 0 },
+            { q: "29. ¿Qué se busca mediante las Técnicas de Indagación en el aula?", options: ["Estimular la reflexión, curiosidad, cuestionamiento profundo y análisis crítico", "Memorizar datos enciclopédicos", "Copiar textos del pizarrón"], correct: 0 },
+            { q: "30. El proceso de revisión y actualización del manual es de carácter:", options: ["Colegiado, mediante equipo interdisciplinario al inicio de cada ciclo escolar", "Unilateral del director en secreto", "Inmutable sin cambios"], correct: 0 },
+            { q: "31. ¿Qué valor de la red tridimensional corresponde a los Valores Cívicos?", options: ["Justicia (Igualdad, diálogo, democracia, legalidad)", "Respeto", "Amor"], correct: 0 },
+            { q: "32. ¿Cuál es el propósito del eje 'TRANSFORMAR' en el perfil de egreso?", options: ["Formar líderes íntegros capaces de generar un impacto positivo y sostenible en la sociedad", "Cambiar de campus constantemente", "Modificar las instalaciones físicas"], correct: 0 },
+            { q: "33. ¿Qué datos se registran obligatoriamente en el apartado conductual de AulaNet?", options: ["Incidencias, bitácoras académicas y observaciones en la ficha del estudiante", "Calificaciones de deportes", "Recetas médicas"], correct: 0 },
+            { q: "34. ¿Quién coordina la atención a alumnos con necesidades educativas o adecuaciones curriculares?", options: ["Departamento de Psicopedagogía en vinculación con el docente", "Mantenimiento", "Contabilidad"], correct: 0 },
+            { q: "35. ¿Qué implica el dominio y estructura de los saberes en el docente?", options: ["Manejo solvente de programas SEP y modelos rectores con rigor metodológico", "Saber improvisar clase sin plan", "Leer únicamente el libro de texto"], correct: 0 },
+            { q: "36. Las disposiciones del manual aplican a:", options: ["Docentes, coordinadores, talleristas, entrenadores y facilitadores del ITX", "Solo directores", "Exclusivamente personal administrativo"], correct: 0 },
+            { q: "37. ¿Cuál es el objetivo general de la función docente en el ITX?", options: ["Implementar procesos de enseñanza-aprendizaje congruentes con el Modelo Educativo Institucional", "Cumplir horario sin interactuar", "Vender cursos externos"], correct: 0 },
+            { q: "38. ¿Qué caracteriza al humanismo educativo en el ITX?", options: ["Sacar a flote lo mejor de cada persona apoyándose en dinamismos positivos", "Exigencia punitiva severa", "Competencia individualista"], correct: 0 },
+            { q: "39. ¿Qué impacto tiene el uso de tecnologías en la Visión 2026-2027 del ITX?", options: ["Fortalecer competencias digitales para insertarse de manera natural en el mundo tecnológico", "Uso recreativo sin supervisión", "Reemplazar totalmente a los docentes"], correct: 0 },
+            { q: "40. Al aprobar el cuestionario de inducción, el colaborador demuestra:", options: ["Conocimiento y alineación con la filosofía, normas y criterios operativos del ITX", "Memoria fotográfica avanzada", "Ninguna relevancia"], correct: 0 }
+        ];
+
+        let userAnswers = {};
+
+        window.onload = function() {
+            renderModulesNav();
+            loadModule(1);
+        };
+
+        function forceUnlock() {
+            const modal = document.getElementById('welcomeModal');
+            if(modal) modal.style.display = 'none';
+            document.body.classList.add('unlocked-scroll');
+        }
+
+        function handleRegistration(e) {
+            e.preventDefault();
+            const name = document.getElementById('userName').value.trim();
+            const email = document.getElementById('userEmail').value.trim();
+            const level = document.getElementById('userLevel').value;
+
+            if(!name || !email || !level) {
+                alert("Por favor completa todos los campos requeridos.");
+                return;
+            }
+
+            currentUser = { name, email, level };
+            document.getElementById('userInfoHeader').innerText = `${name} (${level}) - Campus Xcaret`;
+            forceUnlock();
+        }
+
+        function renderModulesNav() {
+            const nav = document.getElementById('moduleNav');
+            nav.innerHTML = modulesData.map(mod => `
+                <button onclick="loadModule(${mod.id})" id="modBtn-${mod.id}" class="w-full text-left p-3 rounded-xl transition duration-150 border border-transparent hover:bg-slate-100 flex flex-col gap-1">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold text-itx-blue">Módulo ${mod.id}</span>
+                        <span class="text-[10px] px-2 py-0.5 rounded ${mod.badge === 'Exhaustivo' ? 'bg-emerald-100 text-emerald-800 font-bold' : 'bg-slate-200 text-slate-600'}">${mod.badge}</span>
+                    </div>
+                    <span class="text-xs font-medium text-slate-700 line-clamp-1">${mod.title.split(': ')[1] || mod.title}</span>
+                </button>
+            `).join('');
+        }
+
+        function loadModule(id) {
+            modulesData.forEach(m => {
+                const btn = document.getElementById(`modBtn-${m.id}`);
+                if(btn) {
+                    if(m.id === id) {
+                        btn.className = "w-full text-left p-3 rounded-xl transition duration-150 border bg-blue-50 border-itx-blue/30 text-itx-blue font-bold shadow-sm";
+                    } else {
+                        btn.className = "w-full text-left p-3 rounded-xl transition duration-150 border border-transparent hover:bg-slate-100 flex flex-col gap-1";
+                    }
+                }
+            });
+
+            const mod = modulesData.find(m => m.id === id);
+            const contentArea = document.getElementById('contentArea');
+            if(mod && contentArea) {
+                contentArea.innerHTML = mod.content + `
+                    <div class="mt-8 pt-4 border-t flex justify-between items-center">
+                        ${id > 1 ? `<button onclick="loadModule(${id - 1})" class="px-4 py-2 bg-slate-200 rounded-lg text-xs font-bold text-slate-700 hover:bg-slate-300"><i class="fa-solid fa-arrow-left mr-1"></i> Anterior</button>` : '<div></div>'}
+                        ${id < modulesData.length ? `<button onclick="loadModule(${id + 1})" class="px-4 py-2 bg-itx-blue text-white rounded-lg text-xs font-bold hover:bg-slate-800">Siguiente <i class="fa-solid fa-arrow-right ml-1"></i></button>` : `<button onclick="switchTab('quiz')" class="px-4 py-2 bg-itx-gold text-itx-blue rounded-lg text-xs font-bold hover:bg-amber-400">Ir al Cuestionario <i class="fa-solid fa-clipboard-check ml-1"></i></button>`}
+                    </div>
+                `;
+            }
+        }
+
+        function switchTab(tab) {
+            if(tab === 'quiz') {
+                renderQuiz();
+            }
+        }
+
+        function renderQuiz() {
+            const contentArea = document.getElementById('contentArea');
+            let questionsHTML = quizQuestions.map((item, idx) => `
+                <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-3">
+                    <p class="font-bold text-slate-800 text-sm">${item.q}</p>
+                    <div class="space-y-2">
+                        ${item.options.map((opt, optIdx) => `
+                            <label class="flex items-center gap-3 p-2.5 bg-white rounded-lg border border-slate-200 hover:border-itx-blue cursor-pointer transition text-xs text-slate-700">
+                                <input type="radio" name="q_${idx}" value="${optIdx}" onchange="selectAnswer(${idx}, ${optIdx})" ${userAnswers[idx] === optIdx ? 'checked' : ''} class="text-itx-blue focus:ring-itx-blue">
+                                <span>${opt}</span>
+                            </label>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+
+            contentArea.innerHTML = `
+                <div class="space-y-6">
+                    <div class="border-b pb-4 flex justify-between items-start">
+                        <div>
+                            <span class="text-xs font-bold text-itx-gold bg-amber-50 px-2.5 py-1 rounded border border-amber-200">Evaluación Docente</span>
+                            <h2 class="text-2xl font-bold text-itx-blue mt-1">Cuestionario Final del Manual (40 Preguntas)</h2>
+                            <p class="text-xs text-slate-500 mt-1">Responde las 40 preguntas para obtener tu constancia de inducción.</p>
+                        </div>
+                        <div class="text-right">
+                            <span id="quizProgress" class="text-sm font-bold text-itx-blue">0 / 40 Respondidas</span>
+                        </div>
+                    </div>
+
+                    <form id="quizForm" onsubmit="evaluateQuiz(event)" class="space-y-4">
+                        ${questionsHTML}
+                        <div class="pt-6 border-t flex justify-end">
+                            <button type="submit" class="bg-itx-gold text-itx-blue font-extrabold px-8 py-3 rounded-xl hover:bg-amber-400 transition shadow-lg text-sm flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-check-double"></i> Enviar y Evaluar Respuestas
+                            </button>
+                        </div>
+                    </form>
+                    <div id="quizResult" class="hidden mt-6 p-6 rounded-2xl"></div>
+                </div>
+            `;
+            updateQuizProgress();
+        }
+
+        function selectAnswer(qIdx, optIdx) {
+            userAnswers[qIdx] = optIdx;
+            updateQuizProgress();
+        }
+
+        function updateQuizProgress() {
+            const count = Object.keys(userAnswers).length;
+            const el = document.getElementById('quizProgress');
+            if(el) el.innerText = `${count} / 40 Respondidas`;
+        }
+
+        function evaluateQuiz(e) {
+            e.preventDefault();
+            const answeredCount = Object.keys(userAnswers).length;
+            if(answeredCount < 40) {
+                if(!confirm(`Has respondido ${answeredCount} de 40 preguntas. ¿Deseas enviar la evaluación de todos modos?`)) return;
+            }
+
+            let score = 0;
+            quizQuestions.forEach((q, idx) => {
+                if(userAnswers[idx] === q.correct) score++;
+            });
+
+            const percentage = Math.round((score / 40) * 100);
+            const resultDiv = document.getElementById('quizResult');
+            resultDiv.classList.remove('hidden');
+
+            if(percentage >= 70) {
+                resultDiv.className = "mt-6 p-6 bg-emerald-50 border-2 border-emerald-500 rounded-2xl text-emerald-900 space-y-3";
+                resultDiv.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <i class="fa-solid fa-circle-check text-3xl text-emerald-600"></i>
+                        <div>
+                            <h3 class="font-extrabold text-lg">¡Felicidades, ${currentUser.name}!</h3>
+                            <p class="text-xs text-emerald-800">Has aprobado la evaluación del Manual del Docente con una puntuación de <strong>${score} / 40 (${percentage}%)</strong>.</p>
+                        </div>
+                    </div>
+                    <div class="p-4 bg-white rounded-xl border border-emerald-200 text-xs space-y-1 text-slate-700">
+                        <p><strong>Docente / Colaborador:</strong> ${currentUser.name}</p>
+                        <p><strong>Área / Nivel:</strong> ${currentUser.level}</p>
+                        <p><strong>Campus:</strong> Instituto Tepeyac Campus Xcaret (ITX)</p>
+                        <p><strong>Fecha de Validación:</strong> ${new Date().toLocaleDateString('es-MX')}</p>
+                    </div>
+                `;
+            } else {
+                resultDiv.className = "mt-6 p-6 bg-rose-50 border-2 border-rose-500 rounded-2xl text-rose-900 space-y-3";
+                resultDiv.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <i class="fa-solid fa-triangle-exclamation text-3xl text-rose-600"></i>
+                        <div>
+                            <h3 class="font-extrabold text-lg">Puntuación: ${score} / 40 (${percentage}%)</h3>
+                            <p class="text-xs text-rose-800">Se requiere un mínimo de 70% para aprobar. Revisa los contenidos del manual y vuelve a intentarlo.</p>
+                        </div>
+                    </div>
+                `;
+            }
+            resultDiv.scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
